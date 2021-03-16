@@ -1,9 +1,9 @@
 import axios from "axios";
 
-function usersList() {
-  return axios.get("https://randomuser.me/api/?results=200&nat=US");
-}
+const url = "https://randomuser.me/api/?results=200&nat=us";
 
 export default {
-  usersList
+  search: function() {
+       return axios.get(url);
+  }
 };
