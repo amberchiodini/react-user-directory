@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const url = "https://randomuser.me/api/?results=200&nat=us";
+const url = "https://randomuser.me/api/?results=50&nat=us"
 
 export default {
-  search: function() {
-       return axios.get(url);
-  }
-};
+    getEmployees: function() {
+        return axios.get(url);
+    }
+}

@@ -1,119 +1,130 @@
 import React, { Component } from "react";
-import SearchForm from "./SearchForm";
-import EmployeeCard from "./EmployeeCard";
+import SearchBar from "../components/SearchBar";
+import EmployeeTable from "../components/Table";
 import API from "../utils/API";
-import "../styles/Result.css";
-const MaxResults = 20;
 
 class Container extends Component {
-    state = {
-        result: [],
-        filter: "",
-        filterBy: "lastName",
-        currentSort: "default",
-        sortField: ""
+  state = {
+    search: "",
+    employees: [],
+    filteredEmployees: [],
+    sortDirections: this.initialSortDirections,
+  };
 
+  get initialSortDirections() {
+    return {
+      name: "",
+      phone: "",
+      email: "",
+      dob: "",
     };
+  }
 
-    componentDidMount() {
-        API.search()
-            .then(res => {
-                console.log(res)
-                this.setState({
-                    result: res.data.results.map((e, i) => ({
-                        firstName: e.name.first,
-                        lastName: e.name.last,
-                        picture: e.picture.large,
-                        email: e.email,
-                        phone: e.phone,
-                        dob: e.age,
-                        key: i
-                    }))
-                })
-            })
-            .catch(err => console.log(err));
-    }
-
-    filterEmployees = (searchkey) => {
-        console.log("***in Filter*******");
-        console.log(searchkey);
-        console.log(this.state.result);
-        var filterResult = this.state.result.filter(person => person.firstName === searchkey)
+  componentDidMount() {
+    API.getEmployees()
+      .then((res) =>
         this.setState({
-            result: filterResult
+          employees: res.data.results,
+          filteredEmployees: res.data.results,
         })
+      )
+      .catch((err) => console.log(err));
+  }
+
+  handleInputChange = (event) => {
+    const value = event.target.value;
+    this.setState({ search: value });
+    this.filterEmployees(value.toLowerCase().trim());
+  };
+
+  handleFormSubmit = (event) => {
+    event.preventDefault();
+  };
+
+  sortBy = (key, primary = 0, secondary = 0) => {
+    let sortedEmployees = this.state.filteredEmployees;
+    if (this.state.sortDirections[key]) {
+      this.setState({
+        filteredEmployees: sortedEmployees.reverse(),
+        sortDirections: {
+          ...this.initialSortDirections,
+          [key]: this.state.sortDirections[key] === "asc" ? "desc" : "asc",
+        },
+      });
+    } else {
+      sortedEmployees = this.state.filteredEmployees.sort((a, b) => {
+        a = a[key];
+        b = b[key];
+
+        if (primary) {
+          if (secondary && a[primary] === b[primary]) {
+            return a[secondary].localeCompare(b[secondary]);
+          }
+          return a[primary].localeCompare(b[primary]);
+        } else {
+          return a.localeCompare(b);
+        }
+      });
+
+      this.setState({
+        filteredEmployees: sortedEmployees,
+        sortDirections: {
+          ...this.initialSortDirections,
+          [key]: "asc",
+        },
+      });
     }
+  };
 
-    handleFormSubmit = event => {
-        event.preventDefault();
-        const value = event.target.value;
-        const name = event.target.name;
-        console.log("**********");
-        console.log(value);
-        console.log(name);
-        this.filterEmployees(value);
-        this.setState({
-            [name]: value
-        });
-        this.filterEmployees(value);
-        this.filterEmployees(this.state.search);
-    };
-
-    handleInputChange = event => {
-        event.preventDefault();
-        console.log(event);
-        const value = event.target.value;
-        const name = event.target.name;
-        console.log("**********");
-        console.log(value);
-        console.log(name);
-        this.setState({
-            [name]: value
-        });
-    };
-    render() {
-        return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-12">
-                        <h2>Employee Directory</h2>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-6">
-                        <SearchForm
-                            value={this.state.search}
-                            handleInputChange={this.handleInputChange}
-                            handleFormSubmit={this.handleFormSubmit}
-                        />
-                    </div>
-                </div>
-
-                <div className="row">
-                    {/* <div > */}
-                    <table className="table">
-                        <tr>
-                            <th scope="col">Photo</th>
-                            <th>First Name</th>
-                            <th scope="col">Last Name </th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Phone</th>
-                        </tr>
-                        {[...this.state.result].map((item) =>
-                            <EmployeeCard
-                                picture={item.picture}
-                                firstName={item.firstName}
-                                lastName={item.lastName}
-                                email={item.email}
-                                phone={item.phone}
-                                key={item.key}
-                            />
-                        )}
-                    </table>
-                </div>
-            </div>
-        );
+  filterEmployees = (input) => {
+    if (input) {
+      this.setState({
+        filteredEmployees: this.state.employees.filter((employee) => {
+          return (
+            employee.name.first
+              .toLowerCase()
+              .concat(" ", employee.name.last.toLowerCase())
+              .includes(input) ||
+            employee.phone.includes(input) ||
+            employee.phone.replace(/[^\w\s]/gi, "").includes(input) ||
+            employee.email.includes(input) ||
+            this.formatDate(employee.dob.date).includes(input)
+          );
+        }),
+      });
+    } else {
+      this.setState({ filteredEmployees: this.state.employees });
     }
+  };
+
+  formatDate = (date) => {
+    date = new Date(date);
+    let dob = [];
+    dob.push(("0" + (date.getMonth() + 1)).slice(-2));
+    dob.push(("0" + date.getDate()).slice(-2));
+    dob.push(date.getFullYear());
+    return dob.join("-");
+  };
+
+  render() {
+    return (
+      <>
+        <SearchBar
+          value={this.state.search}
+          handleInputChange={this.handleInputChange}
+          handleFormSubmit={this.handleFormSubmit}
+        />
+        <div className="container mt-4">
+          <EmployeeTable
+            state={this.state}
+            sortBy={this.sortBy}
+            filterEmployees={this.filterEmployees}
+            formatDate={this.formatDate}
+          />
+        </div>
+      </>
+    );
+  }
 }
 
 export default Container;
