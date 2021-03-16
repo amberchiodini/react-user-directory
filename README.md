@@ -12,7 +12,7 @@
 I created an app using React.js that allows the user to view their entire employee directory and have quick access to each employee's information using the search bar or column headers. 
 
 ## First Look: 
-
+![React User Directory](https://user-images.githubusercontent.com/69092983/111392102-ed007500-8683-11eb-857d-bfd3202f593e.gif)
 
 ## Technologies Used:
 * [Random User API](https://randomuser.me/)

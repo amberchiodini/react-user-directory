@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/react-user-directory/static/css/main.48f75f55.chunk.css",
+    "main.js": "/react-user-directory/static/js/main.7c0ccde2.chunk.js",
+    "main.js.map": "/react-user-directory/static/js/main.7c0ccde2.chunk.js.map",
+    "runtime~main.js": "/react-user-directory/static/js/runtime~main.d8e47660.js",
+    "runtime~main.js.map": "/react-user-directory/static/js/runtime~main.d8e47660.js.map",
+    "static/css/2.9233ae65.chunk.css": "/react-user-directory/static/css/2.9233ae65.chunk.css",
+    "static/js/2.fab66306.chunk.js": "/react-user-directory/static/js/2.fab66306.chunk.js",
+    "static/js/2.fab66306.chunk.js.map": "/react-user-directory/static/js/2.fab66306.chunk.js.map",
+    "index.html": "/react-user-directory/index.html",
+    "precache-manifest.524ed138fbca4564ece6956931540d3a.js": "/react-user-directory/precache-manifest.524ed138fbca4564ece6956931540d3a.js",
+    "service-worker.js": "/react-user-directory/service-worker.js",
+    "static/css/2.9233ae65.chunk.css.map": "/react-user-directory/static/css/2.9233ae65.chunk.css.map",
+    "static/css/main.48f75f55.chunk.css.map": "/react-user-directory/static/css/main.48f75f55.chunk.css.map"
+  }
+}
